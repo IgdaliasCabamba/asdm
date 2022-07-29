@@ -1,18 +1,24 @@
 use std::path::PathBuf;
 use std::env;
+use serde_derive::Deserialize;
 
 pub fn get_current_working_dir() -> std::io::Result<PathBuf> {
     return env::current_dir()
 }
 
-use serde_derive::Deserialize;
+#[derive(Debug, Deserialize)]
+pub struct Scripts {
+    pub command: String,
+    pub path: String,
+    pub args: i16,
+}
 
-#[derive(Deserialize)]
-pub struct Data {
+#[derive(Debug, Deserialize)]
+struct Data {
     config: Config,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Config {
     pub scripts_path: String,
 }
@@ -51,5 +57,13 @@ pub mod settings{
         };
         return data.config;
 
+    }
+
+    pub fn get_scripts_index(path:String) -> fs::File{
+        let file = fs::File::open(
+            path        
+        ).expect("file not found");
+        return file;
+        //return fs::read_to_string(path).ok().unwrap();
     }
 }
