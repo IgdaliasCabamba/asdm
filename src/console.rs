@@ -1,6 +1,6 @@
 use termimad::{*, minimad::TextTemplate};
 use chrono::{Timelike, Utc};
-use crossterm::style::Color;
+use crossterm;
 
 pub(crate) struct Console {
     console: MadSkin,
@@ -79,5 +79,20 @@ impl Console {
         let base_excpetion_msg: String = "Failed to load ".to_owned();
         let excpetion_log = base_excpetion_msg + &bin;
         return excpetion_log;
+    }
+    pub fn log(&self, msg:String){
+        let text_template = TextTemplate::from(r#"**${message}**"#);
+        let mut expander = text_template.expander();
+
+        expander.set("message", &msg);
+        self.console.print_expander(expander);
+    }
+    pub fn print_error(&mut self, msg:String){
+        self.console.bold.set_fg(crossterm::style::Color::Red);       
+        self.log(msg)
+    }
+    pub fn print_warning(&mut self, msg:String){
+        self.console.bold.set_fg(crossterm::style::Color::Yellow);
+        self.log(msg)
     }
 }
