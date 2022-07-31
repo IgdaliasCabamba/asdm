@@ -1,5 +1,5 @@
-use std::process::exit;
 use crate::console::Console;
+use std::process::exit;
 mod console;
 mod core;
 mod utils;
@@ -35,12 +35,15 @@ fn main() {
                     exit(1);
                 } else {
                     let mut msg = String::from(
-                        "(Too many arguments)\t[this requires: &num]\t[you gave: &gave]"
+                        "(Too many arguments)\t[this requires: &num]\t[you gave: &gave]",
                     );
                     msg = msg.replace("&num", &script.args.to_string());
                     msg = msg.replace("&gave", &num_of_given_args.to_string());
                     console_api.print_warning(msg);
-                    core::new_process(&script.path, &args[2..=script.args.try_into().ok().unwrap()].to_vec());
+                    core::new_process(
+                        &script.path,
+                        &args[2..=script.args.try_into().ok().unwrap()].to_vec(),
+                    );
                 }
             }
         }
