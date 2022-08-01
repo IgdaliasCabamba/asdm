@@ -7,6 +7,7 @@ use std::str::FromStr;
 #[derive(PartialEq, Debug)]
 pub enum Command {
     Run = 0,
+    Install = 1,
     Wrong = -1,
 }
 impl FromStr for Command {
@@ -15,6 +16,7 @@ impl FromStr for Command {
     fn from_str(input: &str) -> Result<Command, Self::Err> {
         match input {
             "run" => Ok(Command::Run),
+            "install" => Ok(Command::Install),
             _ => Err(()),
         }
     }
@@ -23,15 +25,10 @@ impl FromStr for Command {
 pub fn get_current_working_dir() -> std::io::Result<PathBuf> {
     return env::current_dir();
 }
-pub fn get_args_verify(min_size: i16) -> Vec<String> {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() < min_size.try_into().unwrap() {
-        println!("Please enter the command name");
-        exit(1);
-    }
-
-    return args[1..].to_vec();
+pub fn get_args_verify() -> Vec<String> {
+    let mut args: Vec<String> = env::args().collect();
+    args = args[1..].to_vec();
+    return args;
 }
 pub fn cmd_to_enum(cmd: &str) -> Command {
     let res = Command::from_str(&cmd);
@@ -56,7 +53,8 @@ struct Data {
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    pub scripts_path: String,
+    pub run_scripts_path: String,
+    pub install_scripts_path: String,
 }
 
 pub mod settings {
