@@ -1,13 +1,16 @@
-use serde_derive::Deserialize;
+use std::process::exit;
+use crate::modules::data::Config;
+use crate::modules::data::Data;
+use crate::modules::console::Console;
 use std::env;
 use std::path::PathBuf;
-use std::process::exit;
 use std::str::FromStr;
 
 #[derive(PartialEq, Debug)]
 pub enum Command {
     Run = 0,
     Install = 1,
+    Setup = 2,
     Wrong = -1,
 }
 impl FromStr for Command {
@@ -17,6 +20,7 @@ impl FromStr for Command {
         match input {
             "run" => Ok(Command::Run),
             "install" => Ok(Command::Install),
+            "setup" => Ok(Command::Setup),
             _ => Err(()),
         }
     }
@@ -39,24 +43,6 @@ pub fn cmd_to_enum(cmd: &str) -> Command {
     }
 }
 
-#[derive(Debug, Deserialize)]
-pub struct Scripts {
-    pub command: String,
-    pub path: String,
-    pub args: i16,
-}
-
-#[derive(Debug, Deserialize)]
-struct Data {
-    config: Config,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Config {
-    pub run_scripts_path: String,
-    pub install_scripts_path: String,
-}
-
 pub mod settings {
 
     use super::{Config, Data};
@@ -65,7 +51,7 @@ pub mod settings {
     use std::process::exit;
     use toml;
 
-    pub fn get_settings(cwd: PathBuf) -> Config {
+    pub fn get_settings(cwd: &PathBuf) -> Config {
         let filename: PathBuf = Path::new(&cwd)
             .join("src")
             .join("settings")
@@ -102,4 +88,15 @@ pub mod settings {
         return file;
         //return fs::read_to_string(path).ok().unwrap();
     }
+}
+
+macro_rules! log_err {
+    ($msg:expr, $term:expr) => {
+        $term.print_error($msg)
+    };
+}
+
+pub fn log_and_exit(msg:String, mut term:Console){
+    log_err!(msg, term);
+    exit(1)
 }

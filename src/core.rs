@@ -1,4 +1,4 @@
-use crate::{console};
+use crate::modules::{console};
 use std::process::Command;
 
 pub fn new_process(bin: &str, args: &Vec<std::string::String>) -> std::process::ExitStatus {

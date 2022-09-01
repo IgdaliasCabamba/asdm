@@ -2,7 +2,7 @@ use termimad::{*, minimad::TextTemplate};
 use chrono::{Timelike, Utc};
 use crossterm;
 
-pub(crate) struct Console {
+pub struct Console {
     console: MadSkin,
 }
 impl Console {
